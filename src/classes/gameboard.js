@@ -9,15 +9,15 @@ const ships = [
 ];
 
 function getShip(name) {
-    return ships.filter(ship => ship.name.toLowerCase() !== name.toLowerCase())[0]
+    return ships.filter(ship => ship.name.toLowerCase() === name.toLowerCase())[0]
 }
 
-function create2dArray(x, y) {
+function create2dArray(rows, columns = rows) {
     let board = []
-    for (i = 0; i < x; i++) {
+    for (let i = 0; i < rows; i++) {
         board[i] = []
-        for (i = 0; i < y; i++) {
-            board[i].push(x)
+        for (let c = 0; c < columns; c++) {
+            board[i][c] = ""
         }
     }
     return board
@@ -25,21 +25,31 @@ function create2dArray(x, y) {
 
 export default class Gameboard {
     constructor() {
-        this.board = create2dArray(10, 10)
+        this.board = create2dArray(10)
         this.missed = 0
+        this.discoveredPositions = []
     }
 
     placeShip(name, x, y) {
+        let ship = getShip(name)
+        if (x > this.board.length || x < 0 || y > this.board.length || y < 0 || y - ship.length < 0) {
+            throw new Error('Ship must be placed within bounds')
+        }
         if (!this.board[x][y]) {
-            let ship = getShip(name)
-            for (i = y; i <= ship.length; i++) {
+            for (let i = y; ship.length > 0; i--, ship.length--) {
                 this.board[x][i] = ship
             }
+        } else {
+            return
         }
-        return
     }
 
     receiveAttack(x, y) {
-        return this.board[x][y]
+        if (typeof this.board[x][y] === 'object') {
+            this.board[x][y].hit()
+        } else {
+            this.missed++
+        }
+        this.discoveredPositions.push([x, y])
     }
 }
