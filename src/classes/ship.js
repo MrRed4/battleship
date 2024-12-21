@@ -10,6 +10,6 @@ export default class Ship {
     }
 
     isSunk() {
-        return this.length >= this.timesHit
+        return this.length <= this.timesHit
     }
 }

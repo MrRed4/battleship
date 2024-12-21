@@ -1,17 +1,5 @@
 import Ship from "./ship"
 
-const ships = [
-    new Ship("Carrier", 5),
-    new Ship("Battleship", 4),
-    new Ship("Destroyer", 3),
-    new Ship("Submarine", 3),
-    new Ship("Patrol Boat", 2)
-];
-
-function getShip(name) {
-    return ships.filter(ship => ship.name.toLowerCase() === name.toLowerCase())[0]
-}
-
 function create2dArray(rows, columns = rows) {
     let board = []
     for (let i = 0; i < rows; i++) {
@@ -27,29 +15,46 @@ export default class Gameboard {
     constructor() {
         this.board = create2dArray(10)
         this.missed = 0
-        this.discoveredPositions = []
+        this.discovered = []
+        this.placed = []
     }
 
     placeShip(name, x, y) {
-        let ship = getShip(name)
-        if (x > this.board.length || x < 0 || y > this.board.length || y < 0 || y - ship.length < 0) {
-            throw new Error('Ship must be placed within bounds')
+        let ship = this.getShip(name)
+        if (x > this.board.length || x < 0 || y > this.board.length || y < 0 || y + 1 - ship.length < 0) {
+            throw new Error(`Ship must be placed within bounds: ${ship.name}, X: ${x}, Y: ${y}`)
         }
         if (!this.board[x][y]) {
-            for (let i = y; ship.length > 0; i--, ship.length--) {
+            let length = ship.length
+            for (let i = y; length > 0; i--, length--) {
                 this.board[x][i] = ship
             }
-        } else {
-            return
+            this.placed.push(ship)
         }
     }
 
     receiveAttack(x, y) {
-        if (typeof this.board[x][y] === 'object') {
+        if (this.board[x][y] instanceof Ship) {
             this.board[x][y].hit()
         } else {
             this.missed++
         }
-        this.discoveredPositions.push([x, y])
+        this.discovered.push([x, y])
+    }
+
+    isDiscovered(x, y) {
+        return this.discovered.some(coord => coord[0] == x && coord[1] == y)
+    }
+
+    docks = [
+        new Ship("Carrier", 5),
+        new Ship("Battleship", 4),
+        new Ship("Destroyer", 3),
+        new Ship("Submarine", 3),
+        new Ship("Patrol-Boat", 2)
+    ]
+
+    getShip(name) {
+        return this.docks.filter(ship => ship.name.toLowerCase() === name.toLowerCase())[0]
     }
 }
