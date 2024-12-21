@@ -50,8 +50,8 @@ body {
 }
 
 ul > li {
-    padding: 12px;
-    cursor: pointer;
+    margin: 12px;
+    cursor: grab;
 }
 
 .ship, .hit {
@@ -79,6 +79,10 @@ ul > li {
     justify-content: center;
 }
 
+.ship-hit:hover {
+    background-color: rgb(255, 110, 110);
+}
+
 .winner {
     position: absolute;
     left: 50%;
@@ -86,13 +90,34 @@ ul > li {
 }
 
 .dock-ship-square {
-    outline: 1px solid black;
+    border: 1px solid black;
+    border-top: none;
     background-color: var(--ship-colour);
     width: 16px;
     height: 16px;
 }
 
+.destroyed {
+    border: 1px solid black;
+    border-top: none;
+    background-color: rgb(255, 40, 40) !important;
+    width: 16px;
+    height: 16px;
+}
+
+ul * > :first-child {
+    border-top: 1px solid black;
+}
+
 li > div {
     display: flex;
     flex-direction: column;
+}
+
+.placed {
+    filter: grayscale(1);
+}
+
+.moving {
+    opacity: 0.5;
 }
